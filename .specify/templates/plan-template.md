@@ -40,7 +40,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **I. TypeScript Strict**: All new files use strict-mode TypeScript; no `any`, no `@ts-ignore` without justification
+- [ ] **II. API Contract**: Response shapes match `docs/API_SPEC.md` exactly; status codes are 200/201/204/400/404/500
+- [ ] **III. Error Format**: All error responses use `{ "error": { "code": string, "message": string } }`
+- [ ] **IV. Zod Validation**: All external inputs validated via `src/shared/validations/` using `safeParse()`
+- [ ] **V. Service Layer**: Business logic in `src/server/services/`; Route Handlers contain no business logic
 
 ## Project Structure
 
