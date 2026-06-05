@@ -93,6 +93,7 @@ npm run db:seed       # 시드 데이터 삽입
 
 ### 하지 말아야 할 것
 - 명세에 없는 기능 임의 추가 금지
+- 테스트 코드 삭제 또는 skip 금지
 - any 타입 사용 금지
 - console.log 커밋 금지 (디버깅 후 제거)
 - src/client/에서 직접 DB 접근 금지
@@ -125,4 +126,5 @@ npm run db:seed       # 시드 데이터 삽입
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at specs/001-create-ticket-api/plan.md
 <!-- SPECKIT END -->
