@@ -1,20 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createTicketSchema } from '@/shared/validations/ticket';
+import { reorderTicketSchema } from '@/shared/validations/ticket';
 import { ticketService } from '@/server/services/ticketService';
+import { TicketNotFoundError } from '@/server/services/ticketNotFoundError';
 
-export async function GET(): Promise<NextResponse> {
-  try {
-    const data = await ticketService.getBoard();
-    return NextResponse.json(data);
-  } catch {
-    return NextResponse.json(
-      { error: { code: 'INTERNAL_ERROR', message: '서버 오류가 발생했습니다' } },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: Request): Promise<NextResponse> {
+export async function PATCH(request: Request): Promise<NextResponse> {
   let body: unknown;
   try {
     body = await request.json();
@@ -25,7 +14,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   }
 
-  const result = createTicketSchema.safeParse(body);
+  const result = reorderTicketSchema.safeParse(body);
   if (!result.success) {
     const firstError = result.error.errors[0];
     return NextResponse.json(
@@ -35,9 +24,15 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const ticket = await ticketService.create(result.data);
-    return NextResponse.json(ticket, { status: 201 });
-  } catch {
+    const data = await ticketService.reorder(result.data);
+    return NextResponse.json(data);
+  } catch (err) {
+    if (err instanceof TicketNotFoundError) {
+      return NextResponse.json(
+        { error: { code: 'TICKET_NOT_FOUND', message: '티켓을 찾을 수 없습니다' } },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       { error: { code: 'INTERNAL_ERROR', message: '서버 오류가 발생했습니다' } },
       { status: 500 }

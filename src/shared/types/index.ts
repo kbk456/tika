@@ -30,3 +30,17 @@ export interface Ticket {
   updatedAt: Date;
 }
 
+export interface TicketWithOverdue extends Ticket {
+  isOverdue: boolean;
+}
+
+export interface BoardData {
+  board: {
+    BACKLOG: TicketWithOverdue[];
+    TODO: TicketWithOverdue[];
+    IN_PROGRESS: TicketWithOverdue[];
+    DONE: TicketWithOverdue[];
+  };
+  total: number;
+}
+
