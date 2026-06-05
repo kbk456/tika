@@ -95,3 +95,8 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 ### 검증 단계
 - 구현 완료 후 TEST_CASES.md의 시나리오로 검증
 - 테스트 실패 시 구현을 수정 (명세 오류인 경우 명세 먼저 수정)
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
