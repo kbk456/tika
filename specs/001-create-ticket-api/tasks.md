@@ -31,9 +31,9 @@
 
 **⚠️ 중요**: 이 Phase 완료 전까지 US1/US2 성공 케이스 테스트가 실패함
 
-- [ ] T001 `src/server/services/ticketService.ts` 14번째 줄 position 버그 수정 — BACKLOG 빈 경우 반환값 `0` → `-1024`
-- [ ] T002 `app/api/tickets/route.ts` JSON parse 오류 처리 추가 — `request.json()` try/catch로 감싸고 실패 시 400 VALIDATION_ERROR 반환
-- [ ] T003 `app/api/tickets/route.ts` 서비스 오류 처리 추가 — `ticketService.create()` try/catch로 감싸고 실패 시 500 INTERNAL_ERROR 반환
+- [x] T001 `src/server/services/ticketService.ts` 14번째 줄 position 버그 수정 — BACKLOG 빈 경우 반환값 `0` → `-1024`
+- [x] T002 `app/api/tickets/route.ts` JSON parse 오류 처리 추가 — `request.json()` try/catch로 감싸고 실패 시 400 VALIDATION_ERROR 반환
+- [x] T003 `app/api/tickets/route.ts` 서비스 오류 처리 추가 — `ticketService.create()` try/catch로 감싸고 실패 시 500 INTERNAL_ERROR 반환
 
 **체크포인트**: T001~T003 완료 후 기존 테스트 실행 — `npm test` 로 통과 확인
 
@@ -47,12 +47,12 @@
 
 ### US1 테스트 (TDD — 구현 전 작성)
 
-- [ ] T004 [US1] `__tests__/api/tickets.test.ts` afterEach 정리 로직 구현 — `createdIds` 배열로 생성된 티켓 ID 추적 후 `DELETE FROM tickets WHERE id = ANY(...)` 실행
-- [ ] T005 [US1] `__tests__/api/tickets.test.ts` position 순서 검증 케이스 추가 (TC-001-10) — 연속 2개 생성 후 두 번째 position < 첫 번째 position 단언
+- [x] T004 [US1] `__tests__/api/tickets.test.ts` afterEach 정리 로직 구현 — `createdIds` 배열로 생성된 티켓 ID 추적 후 `DELETE FROM tickets WHERE id = ANY(...)` 실행
+- [x] T005 [US1] `__tests__/api/tickets.test.ts` position 순서 검증 케이스 추가 (TC-001-10) — 연속 2개 생성 후 두 번째 position < 첫 번째 position 단언
 
 ### US1 구현 검증
 
-- [ ] T006 [US1] `npm test -- --testNamePattern="201 Created"` 실행 — 모든 US1 케이스 통과 확인 (Phase 2 수정 결과 반영)
+- [x] T006 [US1] `npm test -- --testNamePattern="201 Created"` 실행 — 모든 US1 케이스 통과 확인 (Phase 2 수정 결과 반영)
 
 **체크포인트**: T004~T006 완료 — US1 독립적으로 테스트 가능하고 통과됨
 
@@ -66,7 +66,7 @@
 
 ### US2 구현 검증
 
-- [ ] T007 [US2] `npm test -- --testNamePattern="모든 필드를 포함한 정상 생성"` 실행 — priority=HIGH, plannedStartDate, dueDate 응답 반영 확인 (Phase 2 수정으로 통과되어야 함)
+- [x] T007 [US2] `npm test -- --testNamePattern="모든 필드를 포함한 정상 생성"` 실행 — priority=HIGH, plannedStartDate, dueDate 응답 반영 확인 (Phase 2 수정으로 통과되어야 함)
 
 **체크포인트**: T007 완료 — US2 테스트 통과 (기존 테스트가 모든 선택 필드 시나리오 커버)
 
@@ -80,12 +80,12 @@
 
 ### US3 테스트 (TDD — 구현 전 작성)
 
-- [ ] T008 [P] [US3] `__tests__/api/tickets.test.ts` 공백만 있는 제목 검증 케이스 추가 (TC-001-5) — `{ title: "   " }` → 400 + "제목을 입력해주세요"
-- [ ] T009 [P] [US3] `__tests__/api/tickets.test.ts` 설명 1000자 초과 검증 케이스 추가 (TC-001-7) — `{ title: "ok", description: "a".repeat(1001) }` → 400 + "설명은 1000자 이내로 입력해주세요"
+- [x] T008 [P] [US3] `__tests__/api/tickets.test.ts` 공백만 있는 제목 검증 케이스 추가 (TC-001-5) — `{ title: "   " }` → 400 + "제목을 입력해주세요"
+- [x] T009 [P] [US3] `__tests__/api/tickets.test.ts` 설명 1000자 초과 검증 케이스 추가 (TC-001-7) — `{ title: "ok", description: "a".repeat(1001) }` → 400 + "설명은 1000자 이내로 입력해주세요"
 
 ### US3 구현 검증
 
-- [ ] T010 [US3] `npm test -- --testNamePattern="400 Bad Request"` 실행 — 6가지 에러 케이스 전부 통과 확인
+- [x] T010 [US3] `npm test -- --testNamePattern="400 Bad Request"` 실행 — 6가지 에러 케이스 전부 통과 확인
 
 **체크포인트**: T008~T010 완료 — US3 독립적으로 테스트 가능하고 통과됨
 
@@ -95,9 +95,9 @@
 
 **목적**: 전체 스위트 통과 및 타입 안전성 확인
 
-- [ ] T011 `npx tsc --noEmit` 실행 — TypeScript 타입 체크 통과 확인 (원칙 II)
-- [ ] T012 `npm test` 전체 실행 — TC-API-001 (001-1 ~ 001-11) 모든 케이스 통과 확인
-- [ ] T013 [P] `quickstart.md` 수동 검증 시나리오 실행 — `curl`로 201 응답 + position=-1024 직접 확인
+- [x] T011 `npx tsc --noEmit` 실행 — TypeScript 타입 체크 통과 확인 (원칙 II)
+- [x] T012 `npm test` 전체 실행 — TC-API-001 (001-1 ~ 001-11) 모든 케이스 통과 확인
+- [x] T013 [P] `quickstart.md` 수동 검증 시나리오 실행 — `curl`로 201 응답 + position=-1024 직접 확인
 
 ---
 

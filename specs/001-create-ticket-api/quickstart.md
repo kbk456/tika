@@ -101,10 +101,10 @@ curl -X POST http://localhost:3000/api/tickets \
 
 ## 검증 체크리스트
 
-- [ ] 201 응답 + 전체 필드 반환 (id, position, createdAt, updatedAt 포함)
-- [ ] BACKLOG 빈 상태에서 첫 티켓 position = -1024
-- [ ] 두 번째 티켓 position < 첫 번째 티켓 position
-- [ ] priority 미입력 시 MEDIUM
-- [ ] startedAt, completedAt = null
-- [ ] 6가지 검증 오류 모두 400 + 정확한 에러 메시지
-- [ ] TypeScript 타입 체크: `npx tsc --noEmit`
+- [x] 201 응답 + 전체 필드 반환 (id, position, createdAt, updatedAt 포함)
+- [x] BACKLOG 빈 상태에서 첫 티켓 position = -1024
+- [x] 두 번째 티켓 position < 첫 번째 티켓 position
+- [x] priority 미입력 시 MEDIUM
+- [x] startedAt, completedAt = null
+- [x] 6가지 검증 오류 모두 400 + 정확한 에러 메시지
+- [x] TypeScript 타입 체크: `npx tsc --noEmit`

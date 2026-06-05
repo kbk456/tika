@@ -11,7 +11,7 @@ export const ticketService = {
       .from(tickets)
       .where(eq(tickets.status, TICKET_STATUS.BACKLOG));
 
-    const position = row?.minPos != null ? row.minPos - 1024 : 0;
+    const position = row?.minPos != null ? row.minPos - 1024 : -1024;
 
     const [ticket] = await db
       .insert(tickets)
