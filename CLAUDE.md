@@ -132,4 +132,5 @@ at specs/001-create-ticket-api/plan.md
 ## 최근 변경사항
 > 최근 2주 이력 (상세 내용은 CHANGELOG.md 참조)
 
+- 2026-06-05 `main` — feat: /changelog 스킬 추가 및 초기 CHANGELOG 기록
 - 2026-06-05 `main` — feat: 시드 데이터 추가 및 db:seed 스크립트 tsx로 교체
