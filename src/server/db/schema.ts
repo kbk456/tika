@@ -1,4 +1,13 @@
-import { pgTable, serial, varchar, text, integer, date, timestamp, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  varchar,
+  text,
+  integer,
+  date,
+  timestamp,
+  index,
+} from 'drizzle-orm/pg-core';
 
 export const tickets = pgTable(
   'tickets',
@@ -13,7 +22,9 @@ export const tickets = pgTable(
     dueDate: date('due_date', { mode: 'string' }),
     startedAt: timestamp('started_at', { mode: 'date' }),
     completedAt: timestamp('completed_at', { mode: 'date' }),
-    createdAt: timestamp('created_at', { mode: 'date' }).notNull().defaultNow(),
+    createdAt: timestamp('created_at', { mode: 'date' })
+      .notNull()
+      .defaultNow(),
     updatedAt: timestamp('updated_at', { mode: 'date' })
       .notNull()
       .defaultNow()
