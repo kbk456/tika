@@ -128,3 +128,8 @@ For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
 at specs/001-create-ticket-api/plan.md
 <!-- SPECKIT END -->
+
+## 최근 변경사항
+> 최근 2주 이력 (상세 내용은 CHANGELOG.md 참조)
+
+- 2026-06-05 `main` — feat: 시드 데이터 추가 및 db:seed 스크립트 tsx로 교체
