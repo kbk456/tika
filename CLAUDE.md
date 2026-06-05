@@ -19,10 +19,36 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 - Styling: Tailwind CSS 4
 - Drag & Drop: @dnd-kit/core + @dnd-kit/sortable
 - ORM: Drizzle ORM
-- DB: PostgreSQL (로컬 개발), Vercel Postgres (Neon)
+- DB: PostgreSQL (로컬 개발), Vercel Postgres (배포)
 - Validation: Zod
 - Testing: Jest + React Testing Library
 - Deployment: Vercel
+
+## 명령어
+
+```bash
+# 개발 서버
+npm run dev
+
+# 빌드 / 타입 체크
+npm run build
+npx tsc --noEmit
+
+# 테스트
+npm test
+npm run test:watch
+npm run test:coverage
+
+# 린트 / 포맷
+npm run lint
+npm run format
+
+# DB
+npm run db:generate   # 마이그레이션 파일 생성
+npm run db:migrate    # 마이그레이션 적용
+npm run db:studio     # Drizzle Studio (DB GUI)
+npm run db:seed       # 시드 데이터 삽입
+```
 
 ## 프로젝트 문서 (반드시 참조)
 - 제품 요구사항: /docs/PRD.md
@@ -59,14 +85,14 @@ src/shared/에서 타입과 검증 스키마를 공유한다.
 ## 개발 규칙
 
 ### 반드시 지켜야 할 것
-- 새 기능 구현 전 TEST_CASES.md의 해당 테스트부터 작성
-- API 구현 시 API_SPEC.md의 명세를 정확히 따르기
+- 구현 전 반드시 관련 명세 문서 확인 (API_SPEC.md, COMPONENT_SPEC.md 등)
+- API 구현 시 API_SPEC.md의 요청/응답 형식 정확히 따르기
+- 에러 코드와 메시지는 명세에 정의된 것만 사용
 - 컴포넌트 구현 시 COMPONENT_SPEC.md의 Props와 동작 준수
 - 타입 변경 시 src/shared/types 먼저 수정
 
 ### 하지 말아야 할 것
 - 명세에 없는 기능 임의 추가 금지
-- 테스트 코드 삭제 또는 skip 금지
 - any 타입 사용 금지
 - console.log 커밋 금지 (디버깅 후 제거)
 - src/client/에서 직접 DB 접근 금지
