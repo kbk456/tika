@@ -126,4 +126,5 @@ npm run db:seed       # 시드 데이터 삽입
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at specs/001-create-ticket-api/plan.md
 <!-- SPECKIT END -->
