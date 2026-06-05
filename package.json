@@ -13,7 +13,7 @@
     "test:coverage": "jest --coverage",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "ts-node src/server/db/seed.ts",
+    "db:seed": "tsx src/server/db/seed.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -44,6 +44,7 @@
     "prettier": "^3.0.0",
     "tailwindcss": "^4.0.0",
     "ts-node": "^10.0.0",
+    "tsx": "^4.22.4",
     "typescript": "^5.0.0"
   }
 }
