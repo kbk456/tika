@@ -9,8 +9,12 @@ import ConfirmDialog from '@/client/components/ui/ConfirmDialog';
 import TicketCard from '@/client/components/ticket/TicketCard';
 import ColumnHeader from '@/client/components/board/ColumnHeader';
 import Board from '@/client/components/board/Board';
+import TicketDetailView from '@/client/components/ticket/TicketDetailView';
+import TicketForm from '@/client/components/ticket/TicketForm';
+import TicketModal from '@/client/components/ticket/TicketModal';
 import { DndContext } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
+import type { CreateTicketInput, UpdateTicketInput } from '@/shared/validations/ticket';
 
 // ─── Mock Data ────────────────────────────────────────────────────
 const mockTickets: Record<string, TicketWithOverdue> = {
@@ -135,7 +139,7 @@ const mockBoardData: BoardData = {
 const PHASES = [
   { id: 1, label: 'Phase 1', title: 'UI 기본 컴포넌트', desc: 'Button · Badge · Modal · ConfirmDialog', done: true },
   { id: 2, label: 'Phase 2', title: 'Board 컴포넌트', desc: 'TicketCard · ColumnHeader · Column · Board', done: true },
-  { id: 3, label: 'Phase 3', title: 'Ticket 컴포넌트', desc: 'TicketDetailView · TicketForm · TicketModal', done: false },
+  { id: 3, label: 'Phase 3', title: 'Ticket 컴포넌트', desc: 'TicketDetailView · TicketForm · TicketModal', done: true },
   { id: 4, label: 'Phase 4', title: '데이터 레이어', desc: 'ticketApi · useTickets', done: false },
   { id: 5, label: 'Phase 5', title: '컨테이너', desc: 'BoardHeader · FilterBar · BoardContainer · page.tsx', done: false },
 ] as const;
@@ -563,28 +567,151 @@ function Phase2Content() {
   );
 }
 
-// ─── Phase 3: Ticket 컴포넌트 (🔲 구현 예정) ─────────────────────
+// ─── Phase 3: Ticket 컴포넌트 (✅ 완료) ──────────────────────────
 function Phase3Content() {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [lastCreateData, setLastCreateData] = useState<string | null>(null);
+
+  const [selectedTicket, setSelectedTicket] = useState<TicketWithOverdue | null>(null);
+  const [ticketModalOpen, setTicketModalOpen] = useState(false);
+  const [ticketModalLoading, setTicketModalLoading] = useState(false);
+  const [lastModalAction, setLastModalAction] = useState<string | null>(null);
+
+  const handleCreateSubmit = (data: CreateTicketInput | UpdateTicketInput) => {
+    setCreateLoading(true);
+    setTimeout(() => {
+      setCreateLoading(false);
+      setCreateModalOpen(false);
+      setLastCreateData(JSON.stringify(data, null, 2));
+    }, 800);
+  };
+
+  const handleTicketClick = (ticket: TicketWithOverdue) => {
+    setSelectedTicket(ticket);
+    setTicketModalOpen(true);
+    setLastModalAction(null);
+  };
+
+  const handleTicketUpdate = (_id: number, data: UpdateTicketInput) => {
+    setTicketModalLoading(true);
+    setTimeout(() => {
+      setTicketModalLoading(false);
+      setTicketModalOpen(false);
+      setLastModalAction(`✅ 수정됨: ${JSON.stringify(data)}`);
+    }, 800);
+  };
+
+  const handleTicketDelete = (id: number) => {
+    setTicketModalOpen(false);
+    setLastModalAction(`🗑️ 삭제됨: id=${id}`);
+  };
+
   return (
     <>
-      <SectionCard title="TicketDetailView — 읽기 전용 필드">
-        <Placeholder label="TicketDetailView (status, startedAt, completedAt, createdAt) — Phase 3 구현 후 활성화" height={160} />
-        {/* <TicketDetailView ticket={mockTickets.t3} /> */}
+      {/* TicketDetailView */}
+      <SectionCard title="TicketDetailView — 읽기 전용 필드 (IN_PROGRESS, startedAt 있음)">
+        <div style={{ maxWidth: 400 }}>
+          <TicketDetailView ticket={mockTickets.t3} />
+        </div>
       </SectionCard>
 
-      <SectionCard title="TicketForm — 생성 모드">
-        <Placeholder label="TicketForm (create mode) — Phase 3 구현 후 활성화" height={320} />
-        {/* <TicketForm mode="create" onSubmit={() => {}} onCancel={() => {}} isLoading={false} /> */}
+      <SectionCard title="TicketDetailView — null 필드 처리 (BACKLOG, startedAt/completedAt=null)">
+        <div style={{ maxWidth: 400 }}>
+          <TicketDetailView ticket={mockTickets.t1} />
+        </div>
       </SectionCard>
 
-      <SectionCard title="TicketForm — 수정 모드 (initialData 있음)">
-        <Placeholder label="TicketForm (edit mode) — Phase 3 구현 후 활성화" height={320} />
-        {/* <TicketForm mode="edit" initialData={mockTickets.t1} onSubmit={() => {}} onCancel={() => {}} isLoading={false} /> */}
+      {/* TicketForm — 생성 모드 (standalone) */}
+      <SectionCard title="TicketForm — 생성 모드 (standalone)">
+        <div style={{ maxWidth: 480 }}>
+          <TicketForm
+            mode="create"
+            onSubmit={(data) => alert(`제출: ${JSON.stringify(data)}`)}
+            onCancel={() => alert('취소 클릭')}
+            isLoading={false}
+          />
+        </div>
       </SectionCard>
 
-      <SectionCard title="TicketModal — 상세/수정 모달">
-        <Placeholder label="TicketModal (버튼 클릭 시 열림) — Phase 3 구현 후 활성화" height={56} />
-        {/* <TicketModalDemo ticket={mockTickets.t1} /> */}
+      {/* TicketForm — 수정 모드 (initialData 있음) */}
+      <SectionCard title="TicketForm — 수정 모드 (initialData=t3)">
+        <div style={{ maxWidth: 480 }}>
+          <TicketForm
+            mode="edit"
+            initialData={mockTickets.t3}
+            onSubmit={(data) => alert(`수정: ${JSON.stringify(data)}`)}
+            onCancel={() => alert('취소 클릭')}
+            isLoading={false}
+          />
+        </div>
+      </SectionCard>
+
+      {/* 티켓 생성 버튼 → Modal + TicketForm(create) */}
+      <SectionCard title="티켓 생성 — 버튼 클릭 → Modal + TicketForm(생성 모드)">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+          <Button variant="primary" onClick={() => { setCreateModalOpen(true); setLastCreateData(null); }}>
+            + 티켓 생성
+          </Button>
+          <span style={{ fontSize: 12, color: '#5e6c84' }}>
+            ESC 또는 취소 클릭으로 닫힘 · 생성 클릭 시 1초 로딩 후 닫힘
+          </span>
+        </div>
+        {lastCreateData && (
+          <pre style={{
+            fontSize: 12, backgroundColor: '#f4f5f7', border: '1px solid #dfe1e6',
+            borderRadius: 4, padding: 12, margin: 0, overflowX: 'auto',
+          }}>
+            {`제출 데이터:\n${lastCreateData}`}
+          </pre>
+        )}
+        <Modal isOpen={createModalOpen} onClose={() => setCreateModalOpen(false)}>
+          <div className="modal-header">
+            <span style={{ fontSize: 16, fontWeight: 700 }}>새 티켓 생성</span>
+          </div>
+          <div className="modal-body">
+            <TicketForm
+              mode="create"
+              onSubmit={handleCreateSubmit}
+              onCancel={() => setCreateModalOpen(false)}
+              isLoading={createLoading}
+            />
+          </div>
+        </Modal>
+      </SectionCard>
+
+      {/* Board + TicketModal 통합 */}
+      <SectionCard title="TicketModal — 보드 티켓 카드 클릭 시 열림 (목 데이터)">
+        {lastModalAction && (
+          <div style={{
+            marginBottom: 12, padding: '8px 12px',
+            backgroundColor: '#e3fcef', border: '1px solid #36b37e',
+            borderRadius: 4, fontSize: 13, color: '#172b4d',
+          }}>
+            {lastModalAction}
+          </div>
+        )}
+        <div style={{
+          height: 480,
+          border: '1px solid #dfe1e6',
+          borderRadius: 6,
+          overflow: 'hidden',
+        }}>
+          <Board
+            board={mockBoardData}
+            onTicketClick={handleTicketClick}
+            onDragEnd={() => {}}
+            activeTicket={null}
+          />
+        </div>
+        <TicketModal
+          ticket={selectedTicket}
+          isOpen={ticketModalOpen}
+          onClose={() => setTicketModalOpen(false)}
+          onUpdate={handleTicketUpdate}
+          onDelete={handleTicketDelete}
+          isLoading={ticketModalLoading}
+        />
       </SectionCard>
     </>
   );

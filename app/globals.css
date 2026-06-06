@@ -557,6 +557,18 @@
     resize: vertical;
     min-height: 80px;
   }
+
+  .form-readonly {
+    padding: 8px 10px;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+  }
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────── */
