@@ -6,6 +6,11 @@ import Badge from '@/client/components/ui/Badge';
 import Button from '@/client/components/ui/Button';
 import Modal from '@/client/components/ui/Modal';
 import ConfirmDialog from '@/client/components/ui/ConfirmDialog';
+import TicketCard from '@/client/components/ticket/TicketCard';
+import ColumnHeader from '@/client/components/board/ColumnHeader';
+import Board from '@/client/components/board/Board';
+import { DndContext } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 
 // ─── Mock Data ────────────────────────────────────────────────────
 const mockTickets: Record<string, TicketWithOverdue> = {
@@ -92,29 +97,44 @@ const mockTickets: Record<string, TicketWithOverdue> = {
     priority: 'MEDIUM',
     position: 6144,
     plannedStartDate: null,
-    dueDate: '2026-05-01',
+    dueDate: '2026-06-30',
     startedAt: null,
     completedAt: null,
     createdAt: new Date('2026-06-06'),
     updatedAt: new Date('2026-06-06'),
-    isOverdue: true,
+    isOverdue: false,
+  },
+  t7: {
+    id: 7,
+    title: '단위 테스트 작성',
+    description: null,
+    status: 'TODO',
+    priority: 'LOW',
+    position: 7168,
+    plannedStartDate: null,
+    dueDate: null,
+    startedAt: null,
+    completedAt: null,
+    createdAt: new Date('2026-06-06'),
+    updatedAt: new Date('2026-06-06'),
+    isOverdue: false,
   },
 };
 
 const mockBoardData: BoardData = {
   board: {
-    BACKLOG: [mockTickets.t1, mockTickets.t5],
-    TODO: [mockTickets.t2, mockTickets.t6],
-    IN_PROGRESS: [mockTickets.t3],
-    DONE: [mockTickets.t4],
+    BACKLOG: [mockTickets.t1, mockTickets.t5],           // 2개: HIGH, LOW
+    TODO: [mockTickets.t2, mockTickets.t6, mockTickets.t7], // 3개: overdue, 긴제목, 낮음
+    IN_PROGRESS: [mockTickets.t3],                       // 1개
+    DONE: [mockTickets.t4],                              // 1개
   },
-  total: 6,
+  total: 7,
 };
 
 // ─── Phase 정의 (FRONTEND_TASKS.md 기준) ─────────────────────────
 const PHASES = [
   { id: 1, label: 'Phase 1', title: 'UI 기본 컴포넌트', desc: 'Button · Badge · Modal · ConfirmDialog', done: true },
-  { id: 2, label: 'Phase 2', title: 'Board 컴포넌트', desc: 'TicketCard · ColumnHeader · Column · Board', done: false },
+  { id: 2, label: 'Phase 2', title: 'Board 컴포넌트', desc: 'TicketCard · ColumnHeader · Column · Board', done: true },
   { id: 3, label: 'Phase 3', title: 'Ticket 컴포넌트', desc: 'TicketDetailView · TicketForm · TicketModal', done: false },
   { id: 4, label: 'Phase 4', title: '데이터 레이어', desc: 'ticketApi · useTickets', done: false },
   { id: 5, label: 'Phase 5', title: '컨테이너', desc: 'BoardHeader · FilterBar · BoardContainer · page.tsx', done: false },
@@ -483,44 +503,61 @@ function Phase1Content() {
   );
 }
 
-// ─── Phase 2: Board 컴포넌트 (🔲 구현 예정) ──────────────────────
+// ─── Phase 2: Board 컴포넌트 (✅ 완료) ───────────────────────────
 function Phase2Content() {
+  const cardCases: Array<{ label: string; ticket: TicketWithOverdue }> = [
+    { label: 'HIGH 우선순위 + dueDate', ticket: mockTickets.t1 },
+    { label: '기한 초과 (isOverdue=true)', ticket: mockTickets.t2 },
+    { label: 'LOW 우선순위, dueDate 없음', ticket: mockTickets.t5 },
+    { label: 'DONE 상태 (완료 스타일)', ticket: mockTickets.t4 },
+    { label: '긴 제목 (말줄임 처리)', ticket: mockTickets.t6 },
+  ];
+
   return (
     <>
-      <SectionCard title="TicketCard — 모든 케이스">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
-          <Placeholder label="기본 카드 (HIGH, dueDate 있음)" height={100} />
-          <Placeholder label="오버듀 카드 (isOverdue=true)" height={100} />
-          <Placeholder label="LOW 우선순위, dueDate 없음" height={100} />
-          <Placeholder label="긴 제목 (말줄임 처리)" height={100} />
-          <Placeholder label="isDragging=true" height={100} />
-        </div>
-        {/* Phase 2 구현 완료 후:
-        <TicketCard ticket={mockTickets.t1} onClick={() => {}} />
-        <TicketCard ticket={mockTickets.t2} onClick={() => {}} />
-        */}
+      {/* TicketCard */}
+      <SectionCard title="TicketCard — 케이스별 렌더링">
+        <DndContext>
+          <SortableContext items={cardCases.map((c) => c.ticket.id)}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
+              {cardCases.map(({ label, ticket }) => (
+                <div key={ticket.id}>
+                  <p style={{ fontSize: 11, color: '#5e6c84', marginBottom: 4, fontWeight: 600 }}>
+                    {label}
+                  </p>
+                  <TicketCard ticket={ticket} onClick={() => {}} />
+                </div>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </SectionCard>
 
+      {/* ColumnHeader */}
       <SectionCard title="ColumnHeader — 칼럼명 + 티켓 수 뱃지">
-        <Placeholder label="ColumnHeader (title, count) — Phase 2 구현 후 활성화" height={52} />
-        {/* <ColumnHeader title="Backlog" count={2} /> */}
-      </SectionCard>
-
-      <SectionCard title="Column — 칼럼 (헤더 + 카드 목록)">
-        <div style={{ display: 'flex', gap: 12 }}>
-          <div style={{ width: 260 }}>
-            <Placeholder label="BACKLOG (2 tickets)" height={280} />
-          </div>
-          <div style={{ width: 260 }}>
-            <Placeholder label="빈 칼럼 (empty state)" height={120} />
-          </div>
+        <div style={{ display: 'flex', gap: 2, flexDirection: 'column', maxWidth: 280, backgroundColor: '#ebecf0', borderRadius: 6, overflow: 'hidden' }}>
+          <ColumnHeader title="Backlog" count={2} />
+          <ColumnHeader title="Todo" count={3} />
+          <ColumnHeader title="In Progress" count={1} />
+          <ColumnHeader title="Done" count={1} />
         </div>
-        {/* <Column status="BACKLOG" tickets={mockBoardData.board.BACKLOG} onTicketClick={() => {}} /> */}
       </SectionCard>
 
-      <SectionCard title="Board — 4칼럼 레이아웃 (DnD 포함)">
-        <Placeholder label="Board (사이드바 BACKLOG + 3칼럼 그리드) — Phase 2 구현 후 활성화" height={400} />
-        {/* <Board board={mockBoardData} onTicketClick={() => {}} onDragEnd={() => {}} activeTicket={null} /> */}
+      {/* Board */}
+      <SectionCard title="Board — 4칼럼 레이아웃 (BACKLOG 사이드바 + 3칼럼 그리드)">
+        <div style={{
+          height: 480,
+          border: '1px solid #dfe1e6',
+          borderRadius: 6,
+          overflow: 'hidden',
+        }}>
+          <Board
+            board={mockBoardData}
+            onTicketClick={() => {}}
+            onDragEnd={() => {}}
+            activeTicket={null}
+          />
+        </div>
       </SectionCard>
     </>
   );
