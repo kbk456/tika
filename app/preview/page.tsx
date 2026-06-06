@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import { TicketWithOverdue, BoardData } from '@/shared/types';
+import Badge from '@/client/components/ui/Badge';
+import Button from '@/client/components/ui/Button';
+import Modal from '@/client/components/ui/Modal';
+import ConfirmDialog from '@/client/components/ui/ConfirmDialog';
 
 // ─── Mock Data ────────────────────────────────────────────────────
 const mockTickets: Record<string, TicketWithOverdue> = {
@@ -411,54 +415,110 @@ function Phase1Content() {
 
 // ─── Phase 2: Primitive UI ────────────────────────────────────────
 function Phase2Content() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [lastAction, setLastAction] = useState<string | null>(null);
+
+  const handleConfirm = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setConfirmLoading(false);
+      setConfirmOpen(false);
+      setLastAction('✅ 확인 클릭됨');
+    }, 1200);
+  };
+
   return (
     <>
-      <SectionCard title="Badge — 우선순위 & 상태 뱃지">
+      {/* Badge */}
+      <SectionCard title="Badge — 우선순위 & 날짜 variant">
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* 구현 전 플레이스홀더 */}
-          <Placeholder label="Badge low" width={90} height={28} />
-          <Placeholder label="Badge medium" width={100} height={28} />
-          <Placeholder label="Badge high" width={90} height={28} />
-          <Placeholder label="Badge due" width={120} height={28} />
-          <Placeholder label="Badge overdue" width={110} height={28} />
+          <Badge variant="low">LOW</Badge>
+          <Badge variant="medium">MEDIUM</Badge>
+          <Badge variant="high">HIGH</Badge>
+          <div style={{ width: 1, height: 20, backgroundColor: '#dfe1e6', margin: '0 4px' }} />
+          <Badge variant="due">2026-06-20</Badge>
+          <Badge variant="overdue">기한 초과</Badge>
         </div>
-        {/* Phase 2 구현 완료 후 아래 주석을 해제하고 플레이스홀더 대체 */}
-        {/* <Badge variant="low">LOW</Badge> */}
-        {/* <Badge variant="medium">MEDIUM</Badge> */}
-        {/* <Badge variant="high">HIGH</Badge> */}
-        {/* <Badge variant="due">2026-06-20</Badge> */}
-        {/* <Badge variant="overdue">OVERDUE</Badge> */}
       </SectionCard>
 
-      <SectionCard title="Button — variant × size 매트릭스">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {['primary', 'secondary', 'danger', 'ghost'].map((variant) => (
-            <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 90, fontSize: 12, color: '#5e6c84', fontWeight: 600 }}>
-                {variant}
-              </span>
-              {['sm', 'md', 'lg'].map((size) => (
-                <Placeholder
-                  key={size}
-                  label={`${size}`}
-                  width={size === 'sm' ? 70 : size === 'md' ? 90 : 110}
-                  height={size === 'sm' ? 28 : size === 'md' ? 36 : 44}
-                />
-              ))}
-              <Placeholder label="loading" width={90} height={36} />
-              <Placeholder label="disabled" width={90} height={36} />
-            </div>
-          ))}
+      {/* Button — variant */}
+      <SectionCard title="Button — 4가지 variant">
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Button variant="primary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="danger">Danger</Button>
+          <Button variant="ghost">Ghost</Button>
         </div>
-        {/* Phase 2 구현 완료 후 아래 주석을 해제 */}
-        {/* <Button variant="primary" size="md">새 업무</Button> */}
-        {/* <Button variant="danger" isLoading>삭제 중...</Button> */}
       </SectionCard>
 
+      {/* Button — size */}
+      <SectionCard title="Button — size (sm / md / lg)">
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Button variant="primary" size="sm">Small</Button>
+          <Button variant="primary" size="md">Medium</Button>
+          <Button variant="primary" size="lg">Large</Button>
+        </div>
+      </SectionCard>
+
+      {/* Button — isLoading / disabled */}
+      <SectionCard title="Button — isLoading & disabled 상태">
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Button variant="primary" isLoading>저장 중</Button>
+          <Button variant="danger" isLoading>삭제 중</Button>
+          <Button variant="secondary" disabled>비활성화</Button>
+        </div>
+      </SectionCard>
+
+      {/* Modal */}
       <SectionCard title="Modal — 오버레이 팝업">
-        <Placeholder label="Modal (버튼 클릭 시 열림) — Phase 2 구현 후 활성화" height={56} />
-        {/* Phase 2 구현 완료 후:
-        <ModalDemo /> */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Button variant="primary" onClick={() => setModalOpen(true)}>
+            모달 열기
+          </Button>
+          <span style={{ fontSize: 12, color: '#5e6c84' }}>
+            ESC 키 또는 바깥 클릭으로 닫힘
+          </span>
+        </div>
+
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <div className="modal-header">
+            <span style={{ fontSize: 16, fontWeight: 700 }}>Modal 제목</span>
+            <Button variant="ghost" size="sm" onClick={() => setModalOpen(false)}>✕</Button>
+          </div>
+          <div className="modal-body">
+            <p style={{ margin: 0, color: '#5e6c84', fontSize: 14 }}>
+              모달 본문입니다. 오버레이 클릭 또는 ESC 키로 닫을 수 있습니다.
+            </p>
+          </div>
+          <div className="modal-footer">
+            <Button variant="secondary" size="md" onClick={() => setModalOpen(false)}>취소</Button>
+            <Button variant="primary" size="md" onClick={() => setModalOpen(false)}>확인</Button>
+          </div>
+        </Modal>
+      </SectionCard>
+
+      {/* ConfirmDialog */}
+      <SectionCard title="ConfirmDialog — 삭제 확인 다이얼로그">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Button variant="danger" onClick={() => { setConfirmOpen(true); setLastAction(null); }}>
+            삭제 버튼 클릭
+          </Button>
+          {lastAction && (
+            <span style={{ fontSize: 13, color: '#0052cc', fontWeight: 600 }}>
+              {lastAction}
+            </span>
+          )}
+        </div>
+
+        <ConfirmDialog
+          isOpen={confirmOpen}
+          message="정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+          isLoading={confirmLoading}
+          onConfirm={handleConfirm}
+          onCancel={() => { setConfirmOpen(false); setLastAction('❌ 취소 클릭됨'); }}
+        />
       </SectionCard>
     </>
   );
