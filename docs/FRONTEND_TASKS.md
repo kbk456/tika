@@ -36,49 +36,17 @@ BoardContainer.tsx
 
 | Phase | 내용 | 파일 수 |
 |-------|------|---------|
-| Phase 1 | API 레이어 | 1 |
-| Phase 2 | Primitive UI (Badge · Button · Modal) | 3 |
-| Phase 3 | Form & Dialog (TicketForm · ConfirmDialog) | 2 |
-| Phase 4 | 카드 · Hook (TicketCard · useTickets) | 2 |
-| Phase 5 | Column · Modal · 헤더/필터 | 4 |
+| Phase 1 | 기본 컴포넌트 (Badge · Button · Modal) | 3 |
+| Phase 2 | 폼 & 다이얼로그 (TicketForm · ConfirmDialog) | 2 |
+| Phase 3 | 카드 (TicketCard) | 1 |
+| Phase 4 | 데이터 레이어 (ticketApi · useTickets) | 2 |
+| Phase 5 | Column · TicketModal · BoardHeader · FilterBar | 4 |
 | Phase 6 | Board · BoardContainer | 2 |
 | Phase 7 | 페이지 통합 (page · layout) | 2 |
 
 ---
 
-## Phase 1 — API 레이어
-
-### `src/client/api/ticketApi.ts`
-
-**역할**: 모든 API fetch 호출을 캡슐화. 컴포넌트에서 직접 fetch 금지.
-
-**구현 함수**:
-```
-fetchBoard()          → GET  /api/tickets
-createTicket(data)    → POST /api/tickets
-getTicket(id)         → GET  /api/tickets/:id
-updateTicket(id,data) → PATCH /api/tickets/:id
-deleteTicket(id)      → DELETE /api/tickets/:id
-completeTicket(id)    → PATCH /api/tickets/:id/complete
-reorderTicket(data)   → PATCH /api/tickets/reorder
-```
-
-**TDD 체크리스트**:
-> 테스트 파일: `__tests__/api/ticketApi.test.ts` (global fetch mock 사용)
-
-- [ ] `fetchBoard` — 200 응답 시 BoardData 반환
-- [ ] `fetchBoard` — 네트워크 에러 시 throw
-- [ ] `createTicket` — 201 응답 시 Ticket 반환
-- [ ] `createTicket` — 400 응답 시 에러 메시지 throw
-- [ ] `updateTicket` — 200 응답 시 Ticket 반환
-- [ ] `updateTicket` — 404 응답 시 에러 throw
-- [ ] `deleteTicket` — 204 응답 시 정상 반환
-- [ ] `completeTicket` — 200 응답 시 Ticket 반환
-- [ ] `reorderTicket` — 200 응답 시 응답 데이터 반환
-
----
-
-## Phase 2 — Primitive UI
+## Phase 1 — 기본 컴포넌트
 
 ### `src/client/components/ui/Badge.tsx`
 
@@ -157,7 +125,7 @@ interface ModalProps {
 
 ---
 
-## Phase 3 — Form & Dialog
+## Phase 2 — 폼 & 다이얼로그
 
 ### `src/client/components/ui/ConfirmDialog.tsx`
 
@@ -216,7 +184,7 @@ interface TicketFormProps {
 
 ---
 
-## Phase 4 — TicketCard & useTickets Hook
+## Phase 3 — 카드
 
 ### `src/client/components/board/TicketCard.tsx`
 
@@ -247,6 +215,38 @@ interface TicketCardProps {
 - [ ] `aria-label="티켓: {title}"` 접근성 속성
 - [ ] `role="button"` 접근성 속성
 - [ ] `isDragging=true` → `.ticket-card--dragging` 클래스 적용
+
+---
+
+## Phase 4 — 데이터 레이어
+
+### `src/client/api/ticketApi.ts`
+
+**역할**: 모든 API fetch 호출을 캡슐화. 컴포넌트에서 직접 fetch 금지.
+
+**구현 함수**:
+```
+fetchBoard()          → GET  /api/tickets
+createTicket(data)    → POST /api/tickets
+getTicket(id)         → GET  /api/tickets/:id
+updateTicket(id,data) → PATCH /api/tickets/:id
+deleteTicket(id)      → DELETE /api/tickets/:id
+completeTicket(id)    → PATCH /api/tickets/:id/complete
+reorderTicket(data)   → PATCH /api/tickets/reorder
+```
+
+**TDD 체크리스트**:
+> 테스트 파일: `__tests__/api/ticketApi.test.ts` (global fetch mock 사용)
+
+- [ ] `fetchBoard` — 200 응답 시 BoardData 반환
+- [ ] `fetchBoard` — 네트워크 에러 시 throw
+- [ ] `createTicket` — 201 응답 시 Ticket 반환
+- [ ] `createTicket` — 400 응답 시 에러 메시지 throw
+- [ ] `updateTicket` — 200 응답 시 Ticket 반환
+- [ ] `updateTicket` — 404 응답 시 에러 throw
+- [ ] `deleteTicket` — 204 응답 시 정상 반환
+- [ ] `completeTicket` — 200 응답 시 Ticket 반환
+- [ ] `reorderTicket` — 200 응답 시 응답 데이터 반환
 
 ---
 
