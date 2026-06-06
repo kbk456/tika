@@ -111,15 +111,13 @@ const mockBoardData: BoardData = {
   total: 6,
 };
 
-// ─── Phase 정의 ───────────────────────────────────────────────────
+// ─── Phase 정의 (FRONTEND_TASKS.md 기준) ─────────────────────────
 const PHASES = [
-  { id: 1, label: 'Phase 1', title: 'API Layer', desc: 'ticketApi.ts' },
-  { id: 2, label: 'Phase 2', title: 'Primitive UI', desc: 'Badge · Button · Modal' },
-  { id: 3, label: 'Phase 3', title: 'Form & Dialog', desc: 'TicketForm · ConfirmDialog' },
-  { id: 4, label: 'Phase 4', title: 'Card & Hook', desc: 'TicketCard · useTickets' },
-  { id: 5, label: 'Phase 5', title: 'Column & Modal & Header', desc: 'Column · TicketModal · BoardHeader · FilterBar' },
-  { id: 6, label: 'Phase 6', title: 'Board Container', desc: 'Board · BoardContainer' },
-  { id: 7, label: 'Phase 7', title: 'Page Integration', desc: 'layout · page' },
+  { id: 1, label: 'Phase 1', title: 'UI 기본 컴포넌트', desc: 'Button · Badge · Modal · ConfirmDialog', done: true },
+  { id: 2, label: 'Phase 2', title: 'Board 컴포넌트', desc: 'TicketCard · ColumnHeader · Column · Board', done: false },
+  { id: 3, label: 'Phase 3', title: 'Ticket 컴포넌트', desc: 'TicketDetailView · TicketForm · TicketModal', done: false },
+  { id: 4, label: 'Phase 4', title: '데이터 레이어', desc: 'ticketApi · useTickets', done: false },
+  { id: 5, label: 'Phase 5', title: '컨테이너', desc: 'BoardHeader · FilterBar · BoardContainer · page.tsx', done: false },
 ] as const;
 
 // ─── Preview Page ─────────────────────────────────────────────────
@@ -183,7 +181,7 @@ export default function PreviewPage() {
               style={navButtonStyle(activePhase === phase.id)}
             >
               <span style={{ fontSize: 11, opacity: 0.7, display: 'block' }}>
-                {phase.label}
+                {phase.label} {phase.done ? '✅' : '🔲'}
               </span>
               <span style={{ fontWeight: 600 }}>{phase.title}</span>
             </button>
@@ -256,14 +254,9 @@ function SectionCard({ title, children }: { title: string; children: React.React
 }
 
 // ─── 플레이스홀더 ─────────────────────────────────────────────────
-function Placeholder({ label, width = 'auto', height = 80 }: {
-  label: string;
-  width?: number | string;
-  height?: number;
-}) {
+function Placeholder({ label, height = 80 }: { label: string; height?: number }) {
   return (
     <div style={{
-      width,
       height,
       border: '2px dashed #c1c7d0',
       borderRadius: 6,
@@ -273,7 +266,6 @@ function Placeholder({ label, width = 'auto', height = 80 }: {
       color: '#97a0af',
       fontSize: 13,
       backgroundColor: '#fafbfc',
-      flexShrink: 0,
     }}>
       {label}
     </div>
@@ -352,7 +344,7 @@ function PhaseSection({
       {/* Phase 헤더 */}
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 16 }}>
         <span style={{
-          backgroundColor: '#0052cc',
+          backgroundColor: phase.done ? '#36b37e' : '#0052cc',
           color: '#fff',
           borderRadius: 4,
           padding: '2px 8px',
@@ -365,6 +357,9 @@ function PhaseSection({
           {phase.title}
         </h2>
         <span style={{ fontSize: 13, color: '#5e6c84' }}>{phase.desc}</span>
+        {phase.done && (
+          <span style={{ fontSize: 12, color: '#36b37e', fontWeight: 600 }}>✅ 완료</span>
+        )}
       </div>
 
       {/* Phase 콘텐츠 */}
@@ -373,48 +368,12 @@ function PhaseSection({
       {phase.id === 3 && <Phase3Content />}
       {phase.id === 4 && <Phase4Content />}
       {phase.id === 5 && <Phase5Content />}
-      {phase.id === 6 && <Phase6Content />}
-      {phase.id === 7 && <Phase7Content />}
     </section>
   );
 }
 
-// ─── Phase 1: API Layer ───────────────────────────────────────────
+// ─── Phase 1: UI 기본 컴포넌트 (✅ 완료) ─────────────────────────
 function Phase1Content() {
-  return (
-    <SectionCard title="ticketApi.ts — API 함수 목록">
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
-        {[
-          'fetchBoard()',
-          'createTicket(data)',
-          'getTicket(id)',
-          'updateTicket(id, data)',
-          'deleteTicket(id)',
-          'completeTicket(id)',
-          'reorderTicket(data)',
-        ].map((fn) => (
-          <div key={fn} style={{
-            padding: '8px 12px',
-            backgroundColor: '#f4f5f7',
-            border: '1px solid #dfe1e6',
-            borderRadius: 4,
-            fontFamily: 'monospace',
-            fontSize: 13,
-            color: '#172b4d',
-          }}>
-            {fn}
-          </div>
-        ))}
-      </div>
-      <p style={{ marginTop: 12, fontSize: 12, color: '#97a0af' }}>
-        ※ API 함수는 시각적 렌더링 없음 — 구현 후 테스트로 검증
-      </p>
-    </SectionCard>
-  );
-}
-
-// ─── Phase 2: Primitive UI ────────────────────────────────────────
-function Phase2Content() {
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -524,10 +483,58 @@ function Phase2Content() {
   );
 }
 
-// ─── Phase 3: Form & Dialog ───────────────────────────────────────
+// ─── Phase 2: Board 컴포넌트 (🔲 구현 예정) ──────────────────────
+function Phase2Content() {
+  return (
+    <>
+      <SectionCard title="TicketCard — 모든 케이스">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
+          <Placeholder label="기본 카드 (HIGH, dueDate 있음)" height={100} />
+          <Placeholder label="오버듀 카드 (isOverdue=true)" height={100} />
+          <Placeholder label="LOW 우선순위, dueDate 없음" height={100} />
+          <Placeholder label="긴 제목 (말줄임 처리)" height={100} />
+          <Placeholder label="isDragging=true" height={100} />
+        </div>
+        {/* Phase 2 구현 완료 후:
+        <TicketCard ticket={mockTickets.t1} onClick={() => {}} />
+        <TicketCard ticket={mockTickets.t2} onClick={() => {}} />
+        */}
+      </SectionCard>
+
+      <SectionCard title="ColumnHeader — 칼럼명 + 티켓 수 뱃지">
+        <Placeholder label="ColumnHeader (title, count) — Phase 2 구현 후 활성화" height={52} />
+        {/* <ColumnHeader title="Backlog" count={2} /> */}
+      </SectionCard>
+
+      <SectionCard title="Column — 칼럼 (헤더 + 카드 목록)">
+        <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ width: 260 }}>
+            <Placeholder label="BACKLOG (2 tickets)" height={280} />
+          </div>
+          <div style={{ width: 260 }}>
+            <Placeholder label="빈 칼럼 (empty state)" height={120} />
+          </div>
+        </div>
+        {/* <Column status="BACKLOG" tickets={mockBoardData.board.BACKLOG} onTicketClick={() => {}} /> */}
+      </SectionCard>
+
+      <SectionCard title="Board — 4칼럼 레이아웃 (DnD 포함)">
+        <Placeholder label="Board (사이드바 BACKLOG + 3칼럼 그리드) — Phase 2 구현 후 활성화" height={400} />
+        {/* <Board board={mockBoardData} onTicketClick={() => {}} onDragEnd={() => {}} activeTicket={null} /> */}
+      </SectionCard>
+    </>
+  );
+}
+
+// ─── Phase 3: Ticket 컴포넌트 (🔲 구현 예정) ─────────────────────
 function Phase3Content() {
   return (
     <>
+      <SectionCard title="TicketDetailView — 읽기 전용 필드">
+        <Placeholder label="TicketDetailView (status, startedAt, completedAt, createdAt) — Phase 3 구현 후 활성화" height={160} />
+        {/* <TicketDetailView ticket={mockTickets.t3} /> */}
+      </SectionCard>
+
       <SectionCard title="TicketForm — 생성 모드">
         <Placeholder label="TicketForm (create mode) — Phase 3 구현 후 활성화" height={320} />
         {/* <TicketForm mode="create" onSubmit={() => {}} onCancel={() => {}} isLoading={false} /> */}
@@ -538,31 +545,45 @@ function Phase3Content() {
         {/* <TicketForm mode="edit" initialData={mockTickets.t1} onSubmit={() => {}} onCancel={() => {}} isLoading={false} /> */}
       </SectionCard>
 
-      <SectionCard title="ConfirmDialog">
-        <Placeholder label="ConfirmDialog (버튼 클릭 시 열림) — Phase 3 구현 후 활성화" height={56} />
-        {/* <ConfirmDialogDemo /> */}
+      <SectionCard title="TicketModal — 상세/수정 모달">
+        <Placeholder label="TicketModal (버튼 클릭 시 열림) — Phase 3 구현 후 활성화" height={56} />
+        {/* <TicketModalDemo ticket={mockTickets.t1} /> */}
       </SectionCard>
     </>
   );
 }
 
-// ─── Phase 4: TicketCard & useTickets ─────────────────────────────
+// ─── Phase 4: 데이터 레이어 (🔲 구현 예정) ───────────────────────
 function Phase4Content() {
   return (
     <>
-      <SectionCard title="TicketCard — 모든 케이스">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
-          <Placeholder label="기본 카드 (HIGH, dueDate 있음)" height={100} />
-          <Placeholder label="오버듀 카드 (isOverdue=true)" height={100} />
-          <Placeholder label="LOW 우선순위, dueDate 없음" height={100} />
-          <Placeholder label="긴 제목 (말줄임 처리)" height={100} />
-          <Placeholder label="설명 있는 카드 (2줄 클램프)" height={100} />
-          <Placeholder label="DONE 카드" height={100} />
+      <SectionCard title="ticketApi — API 함수 목록">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8 }}>
+          {[
+            'fetchBoard()',
+            'createTicket(data)',
+            'getTicket(id)',
+            'updateTicket(id, data)',
+            'deleteTicket(id)',
+            'completeTicket(id)',
+            'reorderTicket(data)',
+          ].map((fn) => (
+            <div key={fn} style={{
+              padding: '8px 12px',
+              backgroundColor: '#f4f5f7',
+              border: '1px solid #dfe1e6',
+              borderRadius: 4,
+              fontFamily: 'monospace',
+              fontSize: 13,
+              color: '#172b4d',
+            }}>
+              {fn}
+            </div>
+          ))}
         </div>
-        {/* Phase 4 구현 완료 후:
-        <TicketCard ticket={mockTickets.t1} onClick={() => {}} />
-        <TicketCard ticket={mockTickets.t2} onClick={() => {}} />  // overdue
-        */}
+        <p style={{ marginTop: 12, fontSize: 12, color: '#97a0af' }}>
+          ※ API 함수는 시각적 렌더링 없음 — 구현 후 테스트로 검증
+        </p>
       </SectionCard>
 
       <SectionCard title="useTickets Hook — 상태 뷰어">
@@ -573,11 +594,11 @@ function Phase4Content() {
   );
 }
 
-// ─── Phase 5: Column, TicketModal, BoardHeader, FilterBar ─────────
+// ─── Phase 5: 컨테이너 (🔲 구현 예정) ────────────────────────────
 function Phase5Content() {
   return (
     <>
-      <SectionCard title="BoardHeader">
+      <SectionCard title="BoardHeader — 타이틀 + 새 업무 버튼">
         <Placeholder label="BoardHeader (Search placeholder + 새 업무 버튼) — Phase 5 구현 후 활성화" height={52} />
         {/* <BoardHeader onCreateClick={() => alert('새 업무 클릭')} /> */}
       </SectionCard>
@@ -591,63 +612,20 @@ function Phase5Content() {
         {/* <FilterBar activeFilter="all" onFilterChange={() => {}} counts={{ thisWeek: 2, overdue: 1 }} /> */}
       </SectionCard>
 
-      <SectionCard title="Column — BACKLOG (2개 카드)">
-        <div style={{ width: 260 }}>
-          <Placeholder label="Column BACKLOG (2 tickets) — Phase 5 구현 후 활성화" height={280} />
-        </div>
-        {/* <Column status="BACKLOG" tickets={mockBoardData.board.BACKLOG} onTicketClick={() => {}} /> */}
-      </SectionCard>
-
-      <SectionCard title="Column — 빈 칼럼">
-        <div style={{ width: 260 }}>
-          <Placeholder label="빈 Column (empty state)" height={120} />
-        </div>
-        {/* <Column status="IN_PROGRESS" tickets={[]} onTicketClick={() => {}} /> */}
-      </SectionCard>
-
-      <SectionCard title="TicketModal — 상세/수정 모달">
-        <Placeholder label="TicketModal (버튼 클릭 시 열림) — Phase 5 구현 후 활성화" height={56} />
-        {/* <TicketModalDemo ticket={mockTickets.t1} /> */}
-      </SectionCard>
-    </>
-  );
-}
-
-// ─── Phase 6: Board & BoardContainer ─────────────────────────────
-function Phase6Content() {
-  return (
-    <>
-      <SectionCard title="Board — 전체 칸반 보드 (목 데이터)">
-        <Placeholder
-          label="Board (DnD 포함 전체 보드) — Phase 6 구현 후 활성화"
-          height={400}
-        />
-        {/* <Board board={mockBoardData} onTicketClick={() => {}} onDragEnd={() => {}} activeTicket={null} /> */}
-      </SectionCard>
-
       <SectionCard title="BoardContainer — 상태 관리 + DnD 통합">
-        <Placeholder
-          label="BoardContainer (완전한 인터랙션) — Phase 6 구현 후 활성화"
-          height={500}
-        />
+        <Placeholder label="BoardContainer (완전한 인터랙션) — Phase 5 구현 후 활성화" height={500} />
         {/* <BoardContainer initialData={mockBoardData} /> */}
       </SectionCard>
-    </>
-  );
-}
 
-// ─── Phase 7: Page ────────────────────────────────────────────────
-function Phase7Content() {
-  return (
-    <SectionCard title="Page Integration">
-      <div style={{ padding: 12, backgroundColor: '#fffae6', border: '1px solid #f6c000', borderRadius: 6 }}>
-        <p style={{ margin: 0, fontSize: 13, color: '#172b4d' }}>
-          Phase 7은 <code style={{ backgroundColor: '#ebecf0', padding: '1px 5px', borderRadius: 3 }}>app/(board)/page.tsx</code>와
-          <code style={{ backgroundColor: '#ebecf0', padding: '1px 5px', borderRadius: 3 }}>layout.tsx</code>를
-          구현합니다. DB 연결 및 실제 API 동작이 필요하므로 이 프리뷰 페이지 대신 <a href="/" style={{ color: '#0052cc' }}>/ 경로</a>에서 확인하세요.
-        </p>
-      </div>
-    </SectionCard>
+      <SectionCard title="page.tsx — 서버 컴포넌트">
+        <div style={{ padding: 12, backgroundColor: '#fffae6', border: '1px solid #f6c000', borderRadius: 6 }}>
+          <p style={{ margin: 0, fontSize: 13, color: '#172b4d' }}>
+            <code style={{ backgroundColor: '#ebecf0', padding: '1px 5px', borderRadius: 3 }}>app/(board)/page.tsx</code>는
+            DB 연결 및 실제 API 동작이 필요합니다. 구현 완료 후 <a href="/" style={{ color: '#0052cc' }}>/ 경로</a>에서 확인하세요.
+          </p>
+        </div>
+      </SectionCard>
+    </>
   );
 }
 
